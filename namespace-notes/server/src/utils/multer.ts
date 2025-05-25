@@ -2,7 +2,15 @@ import multer from 'multer';
 import path from 'path';
 import { Request } from 'express';
 
-const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+/**
+ * Validate uploaded files, allowing only PDF documents.
+ */
+
+const fileFilter = (
+  req: Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback,
+) => {
   const allowedExtensions = ['.pdf'];
   const extension = path.extname(file.originalname).toLowerCase();
   if (allowedExtensions.includes(extension)) {
@@ -21,6 +29,9 @@ const storage = multer.diskStorage({
   },
 });
 
+/**
+ * Multer instance configured for PDF uploads up to 25MB.
+ */
 export const upload = multer({
   storage: storage,
   fileFilter: fileFilter,

@@ -57,7 +57,7 @@ From the project root directory, run the following command.
 cd client && npm install
 ```
 
-Make sure you have populated the client `.env` with relevant keys.
+Copy `client/.env.dist` to `client/.env` and populate it with your keys.
 
 ```bash
 # You must first activate a Billing Account here: https://platform.openai.com/account/billing/overview
@@ -82,7 +82,7 @@ From the project root directory, run the following command.
 cd server && npm install
 ```
 
-Make sure you have populated the server `.env` with relevant keys.
+Copy `server/.env.dist` to `server/.env` and populate it with the required keys.
 
 ```bash
 PINECONE_API_KEY="your_pinecone_api_key_here"
@@ -118,6 +118,7 @@ The client uses local storage to store workspace information.
 **Backend Server**
 
 This project uses Node.js and Express to handle file uploads, validation checks, chunking, upsertion, context provision etc. Learn more about the implementation details below.
+For a high level description of the backend, see [BACKEND_OVERVIEW.md](./BACKEND_OVERVIEW.md). The API surface is summarised in [API_REFERENCE.md](./API_REFERENCE.md).
 
 ### Simple Multi-tenant RAG Methodology
 

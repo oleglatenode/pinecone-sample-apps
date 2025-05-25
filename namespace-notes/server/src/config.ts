@@ -1,6 +1,13 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+/**
+ * Application configuration values sourced from environment variables.
+ */
+
+/**
+ * Shape of the configuration object consumed throughout the server.
+ */
 interface Config {
   pineconeApiKey: string;
   pineconeIndexName: string;
@@ -8,6 +15,9 @@ interface Config {
   openAiOrganizationId: string;
 }
 
+/**
+ * Resolved configuration values.
+ */
 const config: Config = {
   pineconeApiKey: process.env.PINECONE_API_KEY || "",
   pineconeIndexName:

@@ -5,6 +5,9 @@ import { Upload } from "@aws-sdk/lib-storage";
 import { S3, ObjectCannedACL } from "@aws-sdk/client-s3";
 import { FileDetail, StorageService } from "./storage";
 
+/**
+ * DigitalOcean Spaces implementation of {@link StorageService}.
+ */
 const spacesEndpoint = `https://nyc3.digitaloceanspaces.com`;
 
 const s3 = new S3({
@@ -17,6 +20,9 @@ const s3 = new S3({
 });
 
 export class SpacesStorage implements StorageService {
+  /**
+   * Upload a file to DigitalOcean Spaces.
+   */
   async saveFile(file: Express.Multer.File, fileKey: string): Promise<void> {
     const fileStream = fs.createReadStream(file.path, { autoClose: true });
 
@@ -49,6 +55,9 @@ export class SpacesStorage implements StorageService {
     }
   }
 
+  /**
+   * Delete all files for a given document from Spaces.
+   */
   async deleteFileFromWorkspace(
     namespaceId: string,
     documentId: string
@@ -76,14 +85,23 @@ export class SpacesStorage implements StorageService {
     }
   }
 
+  /**
+   * `getFilePath` is unused for Spaces storage.
+   */
   async getFilePath(fileKey: string): Promise<string> {
     throw new Error("Not necessary for Spaces storage");
   }
 
+  /**
+   * Create a public URL for a stored file.
+   */
   constructFileUrl(fileKey: string): string {
     return `https://${process.env.DO_SPACES_BUCKET_NAME}.nyc3.digitaloceanspaces.com/${fileKey}`;
   }
 
+  /**
+   * Delete all files under a namespace prefix.
+   */
   async deleteWorkspaceFiles(namespaceId: string): Promise<void> {
     const filePrefix = `${namespaceId}/`;
     const listParams = {
@@ -126,12 +144,18 @@ export class SpacesStorage implements StorageService {
     }
   }
 
+  /**
+   * List all files for a namespace by recursively fetching objects.
+   */
   async listFilesInNamespace(namespaceId: string): Promise<FileDetail[]> {
     const bucket = process.env.DO_SPACES_BUCKET_NAME!;
     const prefix = `${namespaceId}/`;
     return this.listFilesRecursive(prefix, bucket);
   }
 
+  /**
+   * Helper to recursively list objects inside a prefix.
+   */
   private async listFilesRecursive(
     currentPrefix: string,
     bucket: string

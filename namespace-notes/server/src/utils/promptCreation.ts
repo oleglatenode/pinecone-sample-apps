@@ -1,5 +1,13 @@
 import { getContext } from "./context";
 
+/**
+ * Build the system prompt for the chat model using conversation messages and
+ * retrieved context.
+ *
+ * @param messages - Array of chat messages.
+ * @param namespaceId - Workspace namespace to fetch context from.
+ * @returns Object containing the prompt array.
+ */
 export async function createPrompt(messages: any[], namespaceId: string) {
   try {
     // Get the last message
