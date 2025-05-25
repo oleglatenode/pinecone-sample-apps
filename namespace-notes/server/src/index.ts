@@ -7,10 +7,12 @@ import fs from "fs";
 import path from "path";
 import express from "express";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import documentRoutes from "./routes/documentRoutes";
 import contextRoutes from "./routes/contextRoutes";
+import authMiddleware from "./middleware/auth";
 var memwatch = require("@airbnb/node-memwatch");
 
 /** Path where uploaded files are stored. */
@@ -36,6 +38,8 @@ const PORT = process.env.PORT || 4001;
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(authMiddleware);
 
 app.use("/api/documents", documentRoutes);
 app.use("/api/context", contextRoutes);
