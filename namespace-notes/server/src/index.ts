@@ -1,3 +1,7 @@
+/**
+ * Entry point for the Express server. Sets up middleware and routes and
+ * starts listening for incoming requests.
+ */
 // server/node/src/index.ts
 import fs from "fs";
 import path from "path";
@@ -9,7 +13,7 @@ import documentRoutes from "./routes/documentRoutes";
 import contextRoutes from "./routes/contextRoutes";
 var memwatch = require("@airbnb/node-memwatch");
 
-// Define the path for the uploads directory
+/** Path where uploaded files are stored. */
 const uploadsDir = path.join(__dirname, "..", "uploads");
 
 if (process.env.NODE_ENV === "production") {

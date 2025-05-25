@@ -11,6 +11,14 @@ export type Metadata = {
 };
 
 // Used to retrieve matches for the given embeddings
+/**
+ * Query Pinecone and return matching records.
+ *
+ * @param embeddings - Embedding vector to search with.
+ * @param topK - Number of matches to return.
+ * @param namespace - Namespace to search within.
+ * @returns Matching Pinecone records with metadata and similarity scores.
+ */
 const getMatchesFromEmbeddings = async (
   embeddings: number[],
   topK: number,

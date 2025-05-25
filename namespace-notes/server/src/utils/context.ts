@@ -2,6 +2,16 @@ import { ScoredPineconeRecord } from "@pinecone-database/pinecone";
 import { Metadata, getMatchesFromEmbeddings } from "./pinecone";
 import { embedChunks } from "./embeddings";
 
+/**
+ * Retrieve matching context records for a chat message.
+ *
+ * @param message - The user message to embed.
+ * @param namespace - Namespace in Pinecone to search.
+ * @param maxCharacters - Maximum length of returned context string.
+ * @param minScore - Minimum similarity score to consider a match.
+ * @param getOnlyText - When true returns concatenated text rather than match objects.
+ * @returns Concatenated context or full match objects depending on `getOnlyText`.
+ */
 // The function `getContext` is used to retrieve the context of a given message
 export const getContext = async (
   message: string,

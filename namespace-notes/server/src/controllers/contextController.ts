@@ -1,5 +1,5 @@
 /**
- * Controller class for managing documents.
+ * Controller responsible for generating chat context from conversation messages.
  */
 import { Request, Response } from "express";
 import { createPrompt } from "../utils/promptCreation";
@@ -7,7 +7,7 @@ import { createPrompt } from "../utils/promptCreation";
 class ContextController {
 
   /**
-   * Constructs a new instance of DocumentsController.
+   * Constructs a new instance of ContextController.
    */
   constructor() {
 
@@ -15,10 +15,9 @@ class ContextController {
   }
 
   /**
-   * Adds a new document.
+   * Fetch context relevant to the supplied chat messages.
    * @param req - The request object.
    * @param res - The response object.
-   * @returns A promise that resolves to the added document.
    */
   async fetchContext(req: Request, res: Response) {
     try {
