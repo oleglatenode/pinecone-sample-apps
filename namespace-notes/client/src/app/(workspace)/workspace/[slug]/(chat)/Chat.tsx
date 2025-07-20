@@ -32,11 +32,16 @@ export default function ChatPage() {
 
     const handleDeleteWorkspace = async (workspaceId: string) => {
         setIsDeleting(true);
-        console.log(`/api/files/?namespaceId=${workspaceId}`);
+        console.log(`/api/files/?workspaceId=${workspaceId}`);
         try {
-            const response = await fetch(`/api/files/?namespaceId=${workspaceId}`, {
+            const response = await fetch(`/api/files/?workspaceId=${workspaceId}`, {
                 method: 'DELETE',
             });
+            if (response.status === 401) {
+                alert('You are not authorized');
+                setIsDeleting(false);
+                return;
+            }
             const responseData = await response.json();
             removeWorkspace(workspaceId);
             console.log(responseData.message);

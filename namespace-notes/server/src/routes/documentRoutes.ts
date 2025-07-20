@@ -11,10 +11,10 @@ const router = Router();
  * POST /add - Upload one or more documents.
  */
 router.post("/add", (req, res) => {
-  const { namespaceId } = req.query;
+  const { workspaceId } = req.query;
 
-  if (typeof namespaceId === "string" && namespaceId.startsWith("default")) {
-    return res.status(400).json({ error: "Invalid namespaceId, you cannot edit the demo workspace" });
+  if (typeof workspaceId === "string" && workspaceId.startsWith("default")) {
+    return res.status(400).json({ error: "Invalid workspaceId, you cannot edit the demo workspace" });
   }
 
   documentController.addDocuments(req, res);
@@ -24,20 +24,20 @@ router.post("/add", (req, res) => {
  * DELETE /files/delete/:namespaceId/:documentId - Remove a specific document.
  */
 router.delete(
-  "/files/delete/:namespaceId/:documentId",
+  "/files/delete/:workspaceId/:documentId",
   documentController.deleteDocument
 );
 
 /**
  * DELETE /workspace/:namespaceId - Remove an entire workspace.
  */
-router.delete("/workspace/:namespaceId", documentController.deleteWorkspace);
+router.delete("/workspace/:workspaceId", documentController.deleteWorkspace);
 
 /** GET /files/:namespaceId - List files in a workspace. */
-router.get("/files/:namespaceId", documentController.listFilesInNamespace);
+router.get("/files/:workspaceId", documentController.listFilesInNamespace);
 /** GET /files/:namespaceId/:documentId/(*) - Serve a stored file. */
 router.get(
-  "/files/:namespaceId/:documentId/(*)",
+  "/files/:workspaceId/:documentId/(*)",
   documentController.serveDocument
 );
 

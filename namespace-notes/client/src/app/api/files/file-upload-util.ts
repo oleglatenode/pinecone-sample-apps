@@ -7,11 +7,15 @@ export async function uploadFiles(data: FormData) {
         body: data,
       }
     );
+    if (response.status === 401) {
+      alert('You are not authorized');
+      throw new Error('Unauthorized');
+    }
 
     if (response.ok) {
       const responseData = await response.json();
       console.log("Files uploaded successfully:", responseData);
-      return { namespaceId: responseData.namespaceId };
+      return { workspaceId: responseData.workspaceId };
     } else {
       throw new Error("Failed to upload files, " + response.statusText);
     }

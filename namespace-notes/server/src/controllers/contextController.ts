@@ -14,6 +14,11 @@ class ContextController {
     this.fetchContext = this.fetchContext.bind(this);
   }
 
+  private getNamespaceId(req: Request, workspaceId: string): string {
+    const prefix = (req as any).user?.default_space_id;
+    return prefix ? `${prefix}:${workspaceId}` : workspaceId;
+  }
+
   /**
    * Fetch context relevant to the supplied chat messages.
    * @param req - The request object.
@@ -21,11 +26,12 @@ class ContextController {
    */
   async fetchContext(req: Request, res: Response) {
     try {
-      const { namespaceId, messages } = req.body;
+      const { workspaceId, messages } = req.body;
 
-      if (!namespaceId || !messages) {
+      if (!workspaceId || !messages) {
         return res.status(400).send({ message: "Missing required fields" });
       }
+      const namespaceId = this.getNamespaceId(req, workspaceId);
       const context =  await createPrompt(messages, namespaceId);
 
       res.status(200).send({ query: messages[messages.length-1], context});

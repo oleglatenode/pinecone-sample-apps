@@ -16,18 +16,21 @@ export const maxDuration = 600
  * @param res - The response object.
  */
 export async function GET(request: Request) {
-  const namespaceId = new URL(request.url).searchParams.get("namespaceId");
+  const workspaceId = new URL(request.url).searchParams.get("workspaceId");
 
-  console.log("GET request to fetch files for namespace:", namespaceId);
+  console.log("GET request to fetch files for workspace:", workspaceId);
 
-  if (typeof namespaceId !== "string") {
-    throw new Error("Invalid or missing namespace ID in request URL");
+  if (typeof workspaceId !== "string") {
+    throw new Error("Invalid or missing workspace ID in request URL");
   }
 
   try {
     // Ensure the SERVER_URL is correctly configured in your environment
-    const url = `${process.env.SERVER_URL}/api/documents/files/${namespaceId}`;
+    const url = `${process.env.SERVER_URL}/api/documents/files/${workspaceId}`;
     const response = await fetch(url, { method: "GET" });
+    if (response.status === 401) {
+      return new Response("Unauthorized", { status: 401 });
+    }
     const data = await response.json();
 
     if (!response.ok) {
@@ -71,12 +74,15 @@ export async function POST(req: Request) {
         body: formData,
       }
     );
+    if (response.status === 401) {
+      return new Response("Unauthorized", { status: 401 });
+    }
 
     if (response.ok) {
       const responseData = await response.json();
       console.log("Files uploaded successfully:", responseData);
       return new Response(
-        JSON.stringify({ namespaceId: responseData.namespaceId }),
+        JSON.stringify({ workspaceId: responseData.workspaceId }),
         { status: 200 }
       );
     } else {
@@ -97,10 +103,10 @@ export async function POST(req: Request) {
  */
 export async function DELETE(request: Request) {
   const documentId = new URL(request.url).searchParams.get("documentId");
-  const namespaceId = new URL(request.url).searchParams.get("namespaceId");
+  const workspaceId = new URL(request.url).searchParams.get("workspaceId");
 
-  if (typeof namespaceId !== "string") {
-    throw new Error("Invalid or missing namespace ID in request URL");
+  if (typeof workspaceId !== "string") {
+    throw new Error("Invalid or missing workspace ID in request URL");
   }
 
   try {
@@ -109,15 +115,18 @@ export async function DELETE(request: Request) {
 
     if (typeof documentId === "string") {
       // Delete a specific document
-      url = `${process.env.SERVER_URL}/api/documents/files/delete/${namespaceId}/${documentId}`;
+      url = `${process.env.SERVER_URL}/api/documents/files/delete/${workspaceId}/${documentId}`;
       message = "File deleted successfully";
     } else {
       // Delete the entire workspace/namespace
-      url = `${process.env.SERVER_URL}/api/documents/workspace/${namespaceId}`;
+      url = `${process.env.SERVER_URL}/api/documents/workspace/${workspaceId}`;
       message = "Workspace deleted successfully";
     }
 
     const response = await fetch(url, { method: "DELETE" });
+    if (response.status === 401) {
+      return new Response("Unauthorized", { status: 401 });
+    }
     const data = await response.json();
 
     if (!response.ok) {

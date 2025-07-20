@@ -14,7 +14,11 @@ import { FetchedFile } from '@/app/api/files/route';
 
 const fetchFileUrls = async (workspaceId: string) => {
   try {
-    const response = await fetch(`/api/files/?namespaceId=${workspaceId}`);
+    const response = await fetch(`/api/files/?workspaceId=${workspaceId}`);
+    if (response.status === 401) {
+      alert('You are not authorized');
+      return [];
+    }
     if (!response.ok) {
       throw new Error('Failed to fetch file URLs');
     }
@@ -28,7 +32,8 @@ const fetchFileUrls = async (workspaceId: string) => {
 
 export default function Chat({ workspace }: { workspace: Workspace }) {
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    body: { namespaceId: workspace.id },
+    body: { workspaceId: workspace.id },
+    onResponse: (res) => { if (res.status === 401) { alert('You are not authorized'); } return res; }
   });
 
   const [files, setFiles] = useState<FetchedFile[]>([]);
@@ -66,11 +71,15 @@ export default function Chat({ workspace }: { workspace: Workspace }) {
   }, [shouldSubmit]);
 
   const handleDeleteFile = async (documentId: string) => {
-    console.log(`/api/files/?documentId=${documentId}&namespaceId=${workspace.id}`);
+    console.log(`/api/files/?documentId=${documentId}&workspaceId=${workspace.id}`);
     try {
-      const response = await fetch(`/api/files/?documentId=${documentId}&namespaceId=${workspace.id}`, {
+      const response = await fetch(`/api/files/?documentId=${documentId}&workspaceId=${workspace.id}`, {
         method: 'DELETE',
       });
+      if (response.status === 401) {
+        alert('You are not authorized');
+        return;
+      }
       const responseData = await response.json();
       console.log(responseData.message);
       fetchFiles();
@@ -226,7 +235,7 @@ export default function Chat({ workspace }: { workspace: Workspace }) {
 /**
  * Extracts the documentId from a given file URL.
  * Assumes the URL pattern is: 
- * https://domain/[namespaceId]/[documentId]/[filename]
+ * https://domain/[workspaceId]/[documentId]/[filename]
  * 
  * @param fileUrl - The URL of the file from which to extract the documentId.
  * @returns The extracted documentId or an empty string if the URL is invalid.
@@ -238,7 +247,7 @@ export function getDocumentIdFromFileUrl(fileUrl: string): string {
     const pathSegments = url.pathname.split('/').filter(part => part.trim() !== '');
 
     // Assuming the documentId is always the second segment in the path
-    const documentId = pathSegments[1]; // 0: namespaceId, 1: documentId, 2: filename
+    const documentId = pathSegments[1]; // 0: workspaceId, 1: documentId, 2: filename
     return documentId;
   } catch (error) {
     console.error('Error extracting documentId from URL:', error);
