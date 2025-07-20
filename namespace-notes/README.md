@@ -126,7 +126,7 @@ This project uses a basic RAG architecture that achieves multitenancy through th
 
 **Tenant Isolation**
 
-We use namespaces as the mechanism to separate context between worksapces. When we add documents, we check for a namespaceId or generate a new id if the workspace is being created.
+We use namespaces as the mechanism to separate context between workspaces. When we add documents, we check for a workspaceId or generate a new id if the workspace is being created. The server prefixes this id based on the authenticated user.
 
 ```typescript
 /**
@@ -137,7 +137,7 @@ We use namespaces as the mechanism to separate context between worksapces. When 
 */
 async addDocuments(req: Request, res: Response) {
   // This is effectively the ID of the workspace / tenant
-  let namespaceId = req.body.namespaceId;
+  let workspaceId = req.body.workspaceId;
   //...
 ```
 

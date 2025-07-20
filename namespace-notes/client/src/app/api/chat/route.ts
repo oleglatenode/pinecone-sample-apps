@@ -11,17 +11,21 @@ export const runtime = "edge";
  * @throws An error if the expected prompt structure is not present in the server response.
  */
 export async function POST(req: Request) {
-  const { messages, namespaceId } = await req.json();
+  const { messages, workspaceId } = await req.json();
   const response = await fetch(`${process.env.SERVER_URL}/api/context/fetch`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      namespaceId: namespaceId,
+      workspaceId: workspaceId,
       messages: messages,
     }),
   });
+
+  if (response.status === 401) {
+    return new Response("Unauthorized", { status: 401 });
+  }
 
   const { context } = await response.json();
 

@@ -29,6 +29,11 @@ class DocumentsController {
     this.deleteWorkspace = this.deleteWorkspace.bind(this);
   }
 
+  private getNamespaceId(req: Request, workspaceId: string): string {
+    const prefix = (req as any).user?.default_space_id;
+    return prefix ? `${prefix}:${workspaceId}` : workspaceId;
+  }
+
   /**
    * Safe upsert with retry logic to handle rate limits.
    * @param document - The document data to be upserted.
@@ -67,7 +72,8 @@ class DocumentsController {
   async addDocuments(req: Request, res: Response) {
     upload(req, res, async (err) => {
       // This is effectively the ID of the workspace / tenant
-      let namespaceId = req.body.namespaceId;
+      let workspaceId = req.body.workspaceId;
+      let namespaceId = workspaceId ? this.getNamespaceId(req, workspaceId) : "";
       if (err instanceof multer.MulterError) {
         console.error("Multer error:", err);
         return res.status(400).json({ message: err.message });
@@ -78,11 +84,12 @@ class DocumentsController {
 
       const isNewWorkspace = req.body.newWorkspace === "true";
       if (isNewWorkspace) {
-        namespaceId = uuidv4();
-      } else if (!namespaceId) {
+        workspaceId = uuidv4();
+        namespaceId = this.getNamespaceId(req, workspaceId);
+      } else if (!workspaceId) {
         return res
           .status(400)
-          .json({ message: "Missing required field: namespaceId" });
+          .json({ message: "Missing required field: workspaceId" });
       }
 
       const filesObject = req.files as {
@@ -163,7 +170,7 @@ class DocumentsController {
       }
       res.status(200).json({
         message: "Documents added successfully",
-        namespaceId,
+        workspaceId,
         documentResponses,
       });
     });
@@ -176,7 +183,8 @@ class DocumentsController {
    * @param res - The response object.
    */
   async listFilesInNamespace(req: Request, res: Response) {
-    const namespaceId = req.params.namespaceId;
+    const workspaceId = req.params.workspaceId;
+    const namespaceId = this.getNamespaceId(req, workspaceId);
 
     try {
       let files;
@@ -199,7 +207,8 @@ class DocumentsController {
    */
   async deleteDocument(req: Request, res: Response) {
     const documentId = req.params.documentId;
-    const namespaceId = req.params.namespaceId;
+    const workspaceId = req.params.workspaceId;
+    const namespaceId = this.getNamespaceId(req, workspaceId);
 
     try {
       // Delete the document chunks from Pinecone
@@ -270,7 +279,8 @@ class DocumentsController {
    * @param res - The response object.
    */
   async deleteWorkspace(req: Request, res: Response) {
-    const namespaceId = req.params.namespaceId;
+    const workspaceId = req.params.workspaceId;
+    const namespaceId = this.getNamespaceId(req, workspaceId);
 
     try {
       // Delete the namespace from Pinecone
@@ -298,7 +308,8 @@ class DocumentsController {
    * @param res - The response object.
    */
   async serveDocument(req: Request, res: Response) {
-    const { namespaceId, documentId } = req.params;
+    const { workspaceId, documentId } = req.params;
+    const namespaceId = this.getNamespaceId(req, workspaceId);
     const fileKey = `${namespaceId}/${documentId}`;
     console.log("Serving file:", fileKey);
 

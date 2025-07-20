@@ -11,6 +11,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import documentRoutes from "./routes/documentRoutes";
 import contextRoutes from "./routes/contextRoutes";
+import authRoutes from "./routes/authRoutes";
 var memwatch = require("@airbnb/node-memwatch");
 
 /** Path where uploaded files are stored. */
@@ -39,6 +40,7 @@ app.use(bodyParser.json());
 
 app.use("/api/documents", documentRoutes);
 app.use("/api/context", contextRoutes);
+app.use("/api/auth", authRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

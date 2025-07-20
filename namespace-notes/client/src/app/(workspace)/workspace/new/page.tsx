@@ -50,14 +50,14 @@ export default function NewPage() {
       console.log("Files uploaded successfully:", data);
 
       const newWorkspace: Workspace = {
-        id: data.namespaceId,
+        id: data.workspaceId,
         name: title,
         createdAt: Date.now(),
         fileUrls: [],
       };
       addWorkspace(newWorkspace);
 
-      router.push(`/workspace/${data.namespaceId}`);
+      router.push(`/workspace/${data.workspaceId}`);
     } catch (error) {
       console.error("Error uploading files:", error);
       alert(`Failed to upload files. Please try again. ${error}`);

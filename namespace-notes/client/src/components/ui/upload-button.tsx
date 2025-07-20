@@ -46,7 +46,7 @@ export default function UploadButton({
     setIsUploading(true);
 
     const formData = new FormData();
-    formData.append('namespaceId', workspaceId);
+    formData.append('workspaceId', workspaceId);
     for (let i = 0; i < selectedFiles.length; i++) {
       formData.append('files', selectedFiles[i]);
     }
